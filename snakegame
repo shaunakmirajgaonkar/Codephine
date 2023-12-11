@@ -1,0 +1,95 @@
+#include <iostream>
+#include <ncurses.h>
+#include <unistd.h> // for usleep
+
+const int width = 20;
+const int height = 10;
+
+struct Snake {
+    int x, y;
+    int direction; // 0 - Up, 1 - Right, 2 - Down, 3 - Left
+};
+
+void drawSnake(const Snake& snake) {
+    clear(); // Clear the screen
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            if (i == snake.y && j == snake.x)
+                printw("O"); // Snake's head
+            else
+                printw(" ");
+        }
+        printw("\n");
+    }
+
+    refresh(); // Refresh the screen
+}
+
+void moveSnake(Snake& snake) {
+    switch (snake.direction) {
+    case 0:
+        snake.y--;
+        break;
+    case 1:
+        snake.x++;
+        break;
+    case 2:
+        snake.y++;
+        break;
+    case 3:
+        snake.x--;
+        break;
+    }
+}
+
+bool checkCollision(const Snake& snake) {
+    return snake.x < 0 || snake.x >= width || snake.y < 0 || snake.y >= height;
+}
+
+int main() {
+    initscr(); // Initialize the screen
+    noecho(); // Don't echo user input
+    timeout(100); // Set a timeout for getch() to wait for input (in milliseconds)
+
+    Snake snake;
+    snake.x = width / 2;
+    snake.y = height / 2;
+    snake.direction = 1; // Initial direction: Right
+
+    while (true) {
+        drawSnake(snake);
+        moveSnake(snake);
+
+        if (checkCollision(snake)) {
+            printw("Game Over! You collided with the edge of the screen.\n");
+            break;
+        }
+
+        // Wait for a key press
+        int key = getch();
+
+        // Update the snake's direction based on the key press
+        switch (key) {
+        case 'w':
+            snake.direction = 0; // Up
+            break;
+        case 'd':
+            snake.direction = 1; // Right
+            break;
+        case 's':
+            snake.direction = 2; // Down
+            break;
+        case 'a':
+            snake.direction = 3; // Left
+            break;
+        }
+
+        // Sleep for a short duration to control the speed of the game
+        usleep(100000); // 100,000 microseconds (100 milliseconds)
+    }
+
+    endwin(); // End the curses mode
+
+    return 0;
+}
