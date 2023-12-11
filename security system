@@ -1,0 +1,74 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+
+enum SecurityState {
+    ARMED,
+    DISARMED
+};
+
+class MotionSensor {
+public:
+    bool detectMotion() const {  // Mark detectMotion as const
+        return rand() % 2 == 1;
+    }
+};
+
+class Alarm {
+public:
+    void activate() const {  // Mark activate as const
+        std::cout << "Alarm activated! Intruder detected.\n";
+    }
+
+    void deactivate() {
+        std::cout << "Alarm deactivated. All clear.\n";
+    }
+};
+
+
+class SecuritySystem {
+private:
+    SecurityState state;
+    std::vector<MotionSensor> motionSensors;
+    Alarm alarm;
+
+public:
+    SecuritySystem() : state(DISARMED) {}
+
+    void armSystem() {
+        state = ARMED;
+        std::cout << "Security system armed.\n";
+    }
+
+    void disarmSystem() {
+        state = DISARMED;
+        std::cout << "Security system disarmed.\n";
+    }
+
+    void checkSensors() const {
+        if (state == ARMED) {
+            for (const auto& sensor : motionSensors) {
+                if (sensor.detectMotion()) {
+                    alarm.activate();
+                    return;
+                }
+            }
+        }
+    }
+};
+
+int main() {
+    std::srand(static_cast<unsigned int>(std::time(0)));
+
+    SecuritySystem securitySystem;
+    securitySystem.checkSensors();
+
+    securitySystem.armSystem();
+    securitySystem.checkSensors();
+
+    securitySystem.disarmSystem();
+    securitySystem.checkSensors();
+
+    return 0;
+}
