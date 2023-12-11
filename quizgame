@@ -1,0 +1,59 @@
+#include <iostream>
+#include <string>
+
+// Struct to store a question and its correct answer
+struct Question {
+    std::string question;
+    char correctAnswer;
+};
+
+// Function to display a question and get the user's answer
+char askQuestion(const Question& q) {
+    std::cout << q.question << std::endl;
+    std::cout << "A) Option A" << std::endl;
+    std::cout << "B) Option B" << std::endl;
+    std::cout << "C) Option C" << std::endl;
+    std::cout << "D) Option D" << std::endl;
+    
+    char userAnswer;
+    std::cout << "Your answer (A/B/C/D): ";
+    std::cin >> userAnswer;
+    
+    return toupper(userAnswer); // Convert to uppercase for case-insensitive comparison
+}
+
+// Function to check if the user's answer is correct
+bool checkAnswer(const Question& q, char userAnswer) {
+    return (toupper(userAnswer) == q.correctAnswer);
+}
+
+int main() {
+    const int numQuestions = 3; // Change this to the number of questions in your quiz
+
+    // Array of questions
+    Question questions[numQuestions] = {
+        {"What is the capital of France?", 'A'},   // Example question 1
+        {"Which planet is known as the Red Planet?", 'C'}, // Example question 2
+        {"Who wrote 'Romeo and Juliet'?", 'B'}   // Example question 3
+    };
+
+    int score = 0;
+
+    // Loop through the questions
+    for (int i = 0; i < numQuestions; ++i) {
+        char userAnswer = askQuestion(questions[i]);
+
+        // Check if the user's answer is correct and update the score
+        if (checkAnswer(questions[i], userAnswer)) {
+            std::cout << "Correct!\n\n";
+            score++;
+        } else {
+            std::cout << "Incorrect. The correct answer is " << char(questions[i].correctAnswer) << ".\n\n";
+        }
+    }
+
+    // Display the final score
+    std::cout << "Your final score is: " << score << "/" << numQuestions << std::endl;
+
+    return 0;
+}
